@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.12.3",
+    "@material-ui/lab": "^4.0.0-alpha.60",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -29,7 +30,10 @@
       "react-app/jest"
     ],
     "rules": {
-      "semi": ["error", "never"]
+      "semi": [
+        "error",
+        "never"
+      ]
     }
   },
   "browserslist": {
@@ -45,6 +49,8 @@
     ]
   },
   "devDependencies": {
+    "@types/faker": "^5.5.8",
+    "faker": "^5.5.3",
     "husky": "^7.0.2",
     "lint-staged": "^11.1.2",
     "prettier": "^2.4.0"
