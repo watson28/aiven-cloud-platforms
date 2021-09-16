@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import CloudPlatformList from './components/CloudPlatformList'
-import { CloudPlatform } from './types'
+import CloudPlatformList from './CloudPlatformList'
+import Filters from './Filters'
+import { CloudPlatform, CloudProvider } from '../types'
 
 const getCloudPlatforms = (): Promise<CloudPlatform[]> => {
   return new Promise(resolve => {
@@ -31,8 +32,16 @@ const getCloudPlatforms = (): Promise<CloudPlatform[]> => {
   })
 }
 
+const cloudProviders: CloudProvider[] = [
+  { name: 'aws', description: 'Amazon Web Services'},
+  { name: 'google', description: 'Google Cloud'},
+  { name: 'do', description: 'DigitalOcean'},
+]
+
 function App() {
   const [cloudPlatforms, setCloudPlatforms] = useState<CloudPlatform[]>([])
+  const [cloudProviderFilter, setCloudProviderFilter] = useState<string>('')
+  const [maxDistanceFilter, setMaxDistanceFilter] = useState<number>(0)
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
@@ -43,6 +52,13 @@ function App() {
 
   return (
     <div className="App">
+      <Filters
+        cloudProvider={cloudProviderFilter}
+        cloudProviderOptions={cloudProviders}
+        maximumDistance={maxDistanceFilter}
+        onChangeCloudProvider={setCloudProviderFilter}
+        onChangeMaximumDistance={setMaxDistanceFilter}
+      />
       <CloudPlatformList cloudPlatforms={cloudPlatforms} loading={loading} />
     </div>
   )

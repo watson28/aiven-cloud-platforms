@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './App'
+import App from './components/App'
 import reportWebVitals from './reportWebVitals'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { ThemeProvider, createTheme } from '@material-ui/core/styles'

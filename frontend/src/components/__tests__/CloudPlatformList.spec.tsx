@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, within, fireEvent } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import CloudPlatformList from '../CloudPlatformList'
 import faker from 'faker'
 import { CloudPlatform } from '../../types'

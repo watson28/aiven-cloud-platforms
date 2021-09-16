@@ -8,3 +8,8 @@ export interface CloudPlatform {
     longitude: number
   }
 }
+
+export interface CloudProvider {
+  name: string
+  description: string
+}
