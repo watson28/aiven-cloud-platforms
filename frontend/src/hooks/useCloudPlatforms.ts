@@ -16,9 +16,13 @@ const getCloudPlatforms = (): Promise<CloudPlatform[]> => {
   })
 }
 
-function useCloudPlatforms() {
+function useCloudPlatforms(cloudProvider: string = '') {
   const [loading, setLoading] = useState<boolean>(true)
   const [cloudPlatforms, setCloudPlatforms] = useState<CloudPlatform[]>([])
+
+  const visibleCloudPlatforms = cloudPlatforms.filter(platform =>(
+		!cloudProvider || platform.providerName === cloudProvider
+	))
 
   useEffect(() => {
     getCloudPlatforms()
@@ -27,7 +31,7 @@ function useCloudPlatforms() {
   }, [])
 
   return {
-	  cloudPlatforms,
+	  cloudPlatforms: visibleCloudPlatforms,
 	  loading
   }
 }

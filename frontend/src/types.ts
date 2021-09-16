@@ -1,6 +1,7 @@
 export interface CloudPlatform {
   name: string
   description: string
+  providerName: string
   providerDescription: string
   region: string
   geolocation: {

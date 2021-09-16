@@ -12,9 +12,9 @@ const cloudProviders: CloudProvider[] = [
 ]
 
 function App() {
-  const { cloudPlatforms, loading } = useCloudPlatforms()
   const [cloudProviderFilter, setCloudProviderFilter] = useState<string>('')
   const [maxDistanceFilter, setMaxDistanceFilter] = useState<number>(0)
+  const { cloudPlatforms, loading } = useCloudPlatforms(cloudProviderFilter)
 
   return (
     <div className="App">

@@ -27,7 +27,18 @@ describe('useCloudPlatforms hook', () => {
         latitude: 26.07,
         longitude: 50.55
       }
-    }
+    },
+      {
+        name: '"azure-eastasia',
+        description: 'Asia, Hong Kong - Azure: East Asia',
+        providerName: 'azure',
+        providerDescription: 'Azure',
+        region: 'southeast asia',
+        geolocation: {
+          latitude: 22.5,
+          longitude: 114.0
+        }
+      }
   ]
 
   beforeEach(() => {
@@ -76,5 +87,17 @@ describe('useCloudPlatforms hook', () => {
     await waitForNextUpdate()
 
     expect(result.current.loading).toBe(false)
+  })
+
+  it('filters platforms by cloud provider', async () => {
+    const providerNameFilter = 'azure'
+    fetchMock.mockResponse(JSON.stringify(cloudPlatforms))
+    const { result, waitForNextUpdate } = renderHook(() => useCloudPlatforms(providerNameFilter))
+
+    await waitForNextUpdate()
+
+    result.current.cloudPlatforms.forEach(platform => {
+      expect(platform.providerName).toBe(providerNameFilter)
+    })
   })
 })
