@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { CloudPlatform } from '../types'
+import { useErrorHandler } from 'react-error-boundary'
 
 const getCloudPlatforms = (): Promise<CloudPlatform[]> => {
   const serviceUrl = process.env.REACT_APP_SERVICE_URL
@@ -17,6 +18,7 @@ const getCloudPlatforms = (): Promise<CloudPlatform[]> => {
 }
 
 function useCloudPlatforms(cloudProvider: string = '') {
+  const handleError = useErrorHandler()
   const [loading, setLoading] = useState<boolean>(true)
   const [cloudPlatforms, setCloudPlatforms] = useState<CloudPlatform[]>([])
 
@@ -25,14 +27,26 @@ function useCloudPlatforms(cloudProvider: string = '') {
 	))
 
   useEffect(() => {
+    let canceled = false
+
+    setLoading(true)
     getCloudPlatforms()
-    .then(setCloudPlatforms)
-    .finally(() => setLoading(false))
-  }, [])
+    .then(response => {
+      if (!canceled) setCloudPlatforms(response)
+    })
+    .catch(handleError)
+    .finally(() => {
+      if (!canceled) setLoading(false)
+    })
+
+    return () => {
+      canceled = true
+    }
+  }, [handleError])
 
   return {
 	  cloudPlatforms: visibleCloudPlatforms,
-	  loading
+	  loading,
   }
 }
 

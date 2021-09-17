@@ -1,8 +1,17 @@
-import React from 'react'
 import fetchMock from "jest-fetch-mock"
 import { CloudPlatform } from '../../types'
 import { renderHook, act } from '@testing-library/react-hooks'
 import useCloudPlatforms from '../useCloudPlatforms'
+
+const mockErrorBoundaryHandleError = jest.fn()
+jest.mock('react-error-boundary', () => {
+  const originalModule = jest.requireActual('react-error-boundary')
+  return {
+    __esModule: true,
+    ...originalModule,
+    useErrorHandler: () => mockErrorBoundaryHandleError
+  }
+})
 
 describe('useCloudPlatforms hook', () => {
   const cloudPlatforms: CloudPlatform[] = [
@@ -43,6 +52,7 @@ describe('useCloudPlatforms hook', () => {
 
   beforeEach(() => {
     fetchMock.resetMocks()
+    mockErrorBoundaryHandleError.mockClear()
   })
 
   it('fetches cloud platforms', async () => {
@@ -99,5 +109,15 @@ describe('useCloudPlatforms hook', () => {
     result.current.cloudPlatforms.forEach(platform => {
       expect(platform.providerName).toBe(providerNameFilter)
     })
+  })
+
+  it('emits error to errorBoundary when data fetch fails', async () => {
+    const error = new Error('And unexpected error has ocurred')
+    fetchMock.mockReject(error)
+
+    const { waitForNextUpdate } = renderHook(() => useCloudPlatforms())
+    await waitForNextUpdate()
+
+    expect(mockErrorBoundaryHandleError).toHaveBeenCalledWith(error)
   })
 })
