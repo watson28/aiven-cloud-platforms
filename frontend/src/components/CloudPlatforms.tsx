@@ -3,6 +3,7 @@ import CloudPlatformList from './CloudPlatformList'
 import Filters from './Filters'
 import { CloudProvider } from '../types'
 import useCloudPlatforms from '../hooks/useCloudPlatforms'
+import useUserLocation from '../hooks/useUserLocation'
 
 const cloudProviders: CloudProvider[] = [
   { name: 'aws', description: 'Amazon Web Services'},
@@ -13,7 +14,12 @@ const cloudProviders: CloudProvider[] = [
 function CloudPlatforms() {
   const [cloudProviderFilter, setCloudProviderFilter] = useState<string>('')
   const [maxDistanceFilter, setMaxDistanceFilter] = useState<number>(0)
-  const { cloudPlatforms, loading } = useCloudPlatforms(cloudProviderFilter)
+  const userLocation = useUserLocation()
+  const { cloudPlatforms, maxCloudPlatformDistance, loading } = useCloudPlatforms(
+    cloudProviderFilter,
+    maxDistanceFilter,
+    userLocation
+  )
 
   return (
     <>
@@ -21,6 +27,8 @@ function CloudPlatforms() {
         cloudProvider={cloudProviderFilter}
         cloudProviderOptions={cloudProviders}
         maximumDistance={maxDistanceFilter}
+        maximumDistanceLimit={maxCloudPlatformDistance}
+        maximumDistanceDisabled={userLocation === null}
         onChangeCloudProvider={setCloudProviderFilter}
         onChangeMaximumDistance={setMaxDistanceFilter}
       />

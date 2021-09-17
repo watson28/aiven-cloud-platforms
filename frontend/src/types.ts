@@ -4,13 +4,15 @@ export interface CloudPlatform {
   providerName: string
   providerDescription: string
   region: string
-  geolocation: {
-    latitude: number
-    longitude: number
-  }
+  geolocation: Geolocation
 }
 
 export interface CloudProvider {
   name: string
   description: string
+}
+
+export interface Geolocation {
+  latitude: number
+  longitude: number
 }

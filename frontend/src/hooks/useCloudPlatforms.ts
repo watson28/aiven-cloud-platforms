@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { CloudPlatform } from '../types'
+import { useState, useEffect, useMemo } from 'react'
+import { CloudPlatform, Geolocation } from '../types'
 import { useErrorHandler } from 'react-error-boundary'
 
 const getCloudPlatforms = (): Promise<CloudPlatform[]> => {
@@ -16,15 +16,57 @@ const getCloudPlatforms = (): Promise<CloudPlatform[]> => {
     return response.json()
   })
 }
+/*
+ * https://stackoverflow.com/questions/365826/calculate-distance-between-2-gps-coordinates 
+ */
+const getDistanceKm = (loc1: Geolocation, loc2: Geolocation) => {
+  const degreesToRadians = (degrees: number) => degrees * Math.PI / 180
+  const earthRadiusKm = 6371
 
-function useCloudPlatforms(cloudProvider: string = '') {
+  const dLat = degreesToRadians(loc2.latitude - loc1.latitude)
+  const dLon = degreesToRadians(loc2.longitude - loc1.longitude)
+
+  const lat1 = degreesToRadians(loc1.latitude)
+  const lat2 = degreesToRadians(loc2.latitude)
+
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2)
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) 
+  return earthRadiusKm * c
+}
+
+interface CloudPlatformWithDistance extends CloudPlatform {
+  distanceKm: number
+}
+
+function useCloudPlatforms(
+  cloudProvider: string = '',
+  maxDistanceFromLocation: number = 0,
+  location: Geolocation | null = null
+) {
   const handleError = useErrorHandler()
   const [loading, setLoading] = useState<boolean>(true)
   const [cloudPlatforms, setCloudPlatforms] = useState<CloudPlatform[]>([])
 
-  const visibleCloudPlatforms = cloudPlatforms.filter(platform =>(
-		!cloudProvider || platform.providerName === cloudProvider
+  const cloudPlatformsWithDistance = useMemo<CloudPlatformWithDistance[]>(() => {
+    return cloudPlatforms.map(platform => ({
+      ...platform,
+      distanceKm: location ? getDistanceKm(platform.geolocation, location): 0
+    }))
+  }, [cloudPlatforms, location])
+
+  const maxCloudPlatformDistance = useMemo(() => {
+    return cloudPlatformsWithDistance.reduce((maxDistance, platform) => {
+      return Math.max(maxDistance, platform.distanceKm)
+    }, Number.MIN_VALUE)
+  }, [cloudPlatformsWithDistance])
+
+  const visibleCloudPlatforms = useMemo(() => {
+    return cloudPlatformsWithDistance.filter(platform =>(
+		(!cloudProvider || platform.providerName === cloudProvider)
+    && (maxDistanceFromLocation === 0 || platform.distanceKm <= maxDistanceFromLocation)
 	))
+  }, [cloudPlatformsWithDistance, cloudProvider, maxDistanceFromLocation])
 
   useEffect(() => {
     let canceled = false
@@ -46,6 +88,7 @@ function useCloudPlatforms(cloudProvider: string = '') {
 
   return {
 	  cloudPlatforms: visibleCloudPlatforms,
+    maxCloudPlatformDistance,
 	  loading,
   }
 }

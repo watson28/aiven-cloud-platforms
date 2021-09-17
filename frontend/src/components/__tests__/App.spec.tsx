@@ -6,7 +6,8 @@ import useCloudPlatforms from '../../hooks/useCloudPlatforms'
 jest.mock('../../hooks/useCloudPlatforms', (): typeof useCloudPlatforms => {
   return () => ({
     cloudPlatforms: [],
-    loading: false
+    loading: false,
+    maxCloudPlatformDistance: 0
   })
 })
 

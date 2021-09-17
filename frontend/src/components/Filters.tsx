@@ -3,10 +3,10 @@ import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
-import Slider from '@material-ui/core/Slider'
 import Typography from '@material-ui/core/Typography'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import { CloudProvider } from '../types'
+import DebouncedSlider from './DebouncedSlider'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,7 +20,9 @@ const useStyles = makeStyles((theme: Theme) =>
 interface FiltersProps {
   cloudProvider: string | null
   maximumDistance: number
+  maximumDistanceLimit: number
   cloudProviderOptions: CloudProvider[]
+  maximumDistanceDisabled?: boolean
   onChangeCloudProvider?(newValue: string): void
   onChangeMaximumDistance?(newValue: number): void
 }
@@ -29,11 +31,13 @@ function Filters({
   cloudProvider,
   cloudProviderOptions,
   maximumDistance,
+  maximumDistanceLimit,
   onChangeCloudProvider,
-  onChangeMaximumDistance
+  onChangeMaximumDistance,
+  maximumDistanceDisabled
 }: FiltersProps) {
   const classes = useStyles()
-  const handleMaximumDistanceChange = useCallback((_: React.ChangeEvent<{}>, value: number | number[]) => {
+  const handleMaximumDistanceChange = useCallback((event: React.ChangeEvent<{}>, value: number | number[]) => {
     onChangeMaximumDistance && onChangeMaximumDistance(value instanceof Array ? value[0] : value)
   }, [onChangeMaximumDistance])
   
@@ -71,13 +75,15 @@ function Filters({
       </FormControl>
       <FormControl className={classes.formControl}>
         <Typography id="cloud-platform-max-distance" gutterBottom>
-          Max distance
+          Max distance from current location
         </Typography>
-        <Slider
+        <DebouncedSlider
+          delay={500}
           defaultValue={0}
           min={0}
-          max={100}
+          max={maximumDistanceLimit}
           value={maximumDistance}
+          disabled={maximumDistanceDisabled}
           onChange={handleMaximumDistanceChange}
           aria-labelledby="cloud-platform-max-distance"
           valueLabelDisplay="auto"

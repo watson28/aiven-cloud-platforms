@@ -62,7 +62,9 @@ describe('useCloudPlatforms hook', () => {
     await waitForNextUpdate()
 
     expect(mockResponse).toHaveBeenCalled()
-    expect(result.current.cloudPlatforms).toEqual(cloudPlatforms)
+    cloudPlatforms.forEach(platform => {
+      expect(result.current.cloudPlatforms).toContainEqual(expect.objectContaining(platform))
+    })
   })
 
   it('does not fetch cloud platforms when hook rerender', async () => {
@@ -109,6 +111,27 @@ describe('useCloudPlatforms hook', () => {
     result.current.cloudPlatforms.forEach(platform => {
       expect(platform.providerName).toBe(providerNameFilter)
     })
+  })
+
+  it('filters platforms by maximum distance from location', async () => {
+    const providerNameFilter = ''
+    const maxDistanceFromLocationKm = 10
+    const testPlatform = cloudPlatforms[0]
+    const location = {
+      latitude: testPlatform.geolocation.latitude + 0.01,
+      longitude: testPlatform.geolocation.longitude + 0.01
+    }
+    fetchMock.mockResponse(JSON.stringify(cloudPlatforms))
+    const { result, waitForNextUpdate } = renderHook(() => useCloudPlatforms(
+      providerNameFilter,
+      maxDistanceFromLocationKm,
+      location
+    ))
+
+    await waitForNextUpdate()
+
+    expect(result.current.cloudPlatforms.length).toBe(1)
+    expect(result.current.cloudPlatforms[0]).toEqual(expect.objectContaining(testPlatform))
   })
 
   it('emits error to errorBoundary when data fetch fails', async () => {

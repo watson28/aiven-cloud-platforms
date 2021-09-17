@@ -4,7 +4,7 @@ import Filters from '../Filters'
 import { CloudProvider } from '../../types'
 import { SliderProps } from '@material-ui/core'
 
-jest.mock('@material-ui/core/Slider', () => (props: SliderProps) => {
+jest.mock('../DebouncedSlider', () => (props: SliderProps) => {
   const { id, name, min, max, onChange } = props
   return (
     <input
@@ -34,6 +34,7 @@ describe('Filters component', () => {
       cloudProvider=""
       cloudProviderOptions={cloudProviders}
       maximumDistance={0}
+      maximumDistanceLimit={100}
       onChangeCloudProvider={onChangeCloudProvider}
     />)
 
@@ -49,6 +50,7 @@ describe('Filters component', () => {
       cloudProvider=""
       cloudProviderOptions={cloudProviders}
       maximumDistance={0}
+      maximumDistanceLimit={100}
       onChangeMaximumDistance={onChangeMaxDistance}
     />)
 
