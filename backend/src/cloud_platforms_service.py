@@ -1,5 +1,5 @@
 from json.decoder import JSONDecodeError
-from typing import Any, Sequence, TypedDict, Union, cast
+from typing import Any, List, Optional, Sequence, TypedDict, Union, cast
 from pydantic import create_model_from_typeddict, ValidationError
 import logging
 import requests
@@ -37,11 +37,17 @@ class CloudPlatformsService:
 			raise CloudPlatformsUnavailableException()
 
 		try:
-			response_content: dict = response.json()
-			response_model = CloudPlatformDownstreamResponseModel(**response_content)
-			validated_cloud_platforms = map(self._validate_cloud_platform, response_model.clouds)
+			response_content = response.json()
+			self._validate_cloud_platform_response(response_content)
+			validated_cloud_platforms = map(
+				self._map_valid_cloud_platform_or_none,
+				cast(CloudPlatformDownstreamResponse, response_content)['clouds']
+			)
+			return cast(
+				List[CloudPlatformDownstream],
+				list(filter(lambda platform: platform is not None, validated_cloud_platforms))
+			)
 
-			return list(filter(lambda platform: platform is not None, validated_cloud_platforms))
 		except JSONDecodeError:
 			logging.exception('Invalid JSON content received from downstream service')
 			raise CloudPlatformsUnavailableException()
@@ -49,9 +55,16 @@ class CloudPlatformsService:
 			logging.exception('Invalid clouds format received from downstream service')
 			raise CloudPlatformsUnavailableException()
 
-	def _validate_cloud_platform(self, cloud_platform_dict: CloudPlatformDownstream) -> Union[CloudPlatformDownstream, None]:
+	def _map_valid_cloud_platform_or_none(self, cloud_platform: dict) -> Optional[CloudPlatformDownstream]:
 		try:
-			return cast(CloudPlatformDownstream, CloudPlatformDownstreamModel(**cloud_platform_dict).dict())
+			self._validate_cloud_platform(cloud_platform)
+			return cast(CloudPlatformDownstream, cloud_platform)
 		except ValidationError:
 			logging.exception('Invalid cloud platform format received.')
 			return None
+
+	def _validate_cloud_platform(self, cloud_platform_dict: dict):
+		CloudPlatformDownstreamModel(**cloud_platform_dict)
+
+	def _validate_cloud_platform_response(self, response: dict):
+		CloudPlatformDownstreamResponseModel(**response)
