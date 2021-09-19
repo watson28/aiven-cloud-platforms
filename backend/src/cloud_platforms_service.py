@@ -18,20 +18,6 @@ class CloudPlatformDownstreamResponse(TypedDict):
 	# errors: Optional[Sequence[Any]] = None
 
 
-class Geolocation:
-	latitude: float
-	longitude: float
-
-
-class CloudPlatform:
-	name: str
-	description: str
-	provider_name: str
-	provider_description: str
-	region: str
-	geolocation: Geolocation
-
-
 # next lines type ignored because of fix not released yet: https://github.com/samuelcolvin/pydantic/issues/3008
 CloudPlatformDownstreamResponseModel = create_model_from_typeddict(CloudPlatformDownstreamResponse) # type: ignore
 CloudPlatformDownstreamModel = create_model_from_typeddict(CloudPlatformDownstream) # type: ignore
