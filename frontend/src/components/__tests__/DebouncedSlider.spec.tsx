@@ -1,4 +1,4 @@
-import { SliderProps } from "@material-ui/core"
+import { SliderProps } from '@material-ui/core'
 import DebouncedSlider from '../DebouncedSlider'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 
@@ -13,7 +13,9 @@ jest.mock('@material-ui/core/Slider', () => (props: SliderProps) => {
       name={name}
       min={min}
       max={max}
-      onChange={(event) => onChange && onChange(event, parseInt(event.target.value))}
+      onChange={(event) =>
+        onChange && onChange(event, parseInt(event.target.value))
+      }
     />
   )
 })
@@ -22,7 +24,7 @@ describe('DebouncedSlider component', () => {
   beforeEach(() => {
     jest.useFakeTimers()
   })
-  
+
   afterEach(() => {
     jest.clearAllTimers()
     jest.useRealTimers()
@@ -33,10 +35,9 @@ describe('DebouncedSlider component', () => {
     const onChange = jest.fn()
     render(<DebouncedSlider delay={delay} onChange={onChange} />)
 
-    fireEvent.change(
-      screen.getByTestId(mockSliderTestId),
-      { target: { value: 25 } }
-    )
+    fireEvent.change(screen.getByTestId(mockSliderTestId), {
+      target: { value: 25 }
+    })
     act(() => {
       jest.advanceTimersByTime(delay / 2)
     })
@@ -50,10 +51,9 @@ describe('DebouncedSlider component', () => {
     const onChange = jest.fn()
     render(<DebouncedSlider delay={delay} onChange={onChange} />)
 
-    fireEvent.change(
-      screen.getByTestId(mockSliderTestId),
-      { target: { value: newValue } }
-    )
+    fireEvent.change(screen.getByTestId(mockSliderTestId), {
+      target: { value: newValue }
+    })
     act(() => {
       jest.advanceTimersByTime(delay)
     })

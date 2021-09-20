@@ -8,7 +8,7 @@ const getCloudPlatforms = (): Promise<CloudPlatform[]> => {
     throw new Error('Service url not defined in application.')
   }
 
-  return fetch(`${serviceUrl}/cloud-platforms`).then(response => {
+  return fetch(`${serviceUrl}/cloud-platforms`).then((response) => {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
@@ -17,10 +17,10 @@ const getCloudPlatforms = (): Promise<CloudPlatform[]> => {
   })
 }
 /*
- * https://stackoverflow.com/questions/365826/calculate-distance-between-2-gps-coordinates 
+ * https://stackoverflow.com/questions/365826/calculate-distance-between-2-gps-coordinates
  */
 const getDistanceKm = (loc1: Geolocation, loc2: Geolocation) => {
-  const degreesToRadians = (degrees: number) => degrees * Math.PI / 180
+  const degreesToRadians = (degrees: number) => (degrees * Math.PI) / 180
   const earthRadiusKm = 6371
 
   const dLat = degreesToRadians(loc2.latitude - loc1.latitude)
@@ -29,9 +29,10 @@ const getDistanceKm = (loc1: Geolocation, loc2: Geolocation) => {
   const lat1 = degreesToRadians(loc1.latitude)
   const lat2 = degreesToRadians(loc2.latitude)
 
-  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-          Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2)
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) 
+  var a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2)
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
   return earthRadiusKm * c
 }
 
@@ -54,14 +55,18 @@ function useCloudPlatforms(
       return acc
     }, {} as Record<string, string>)
 
-    return Object.entries(providerRecords)
-      .map(([name, description]) => ({ name, description }))
+    return Object.entries(providerRecords).map(([name, description]) => ({
+      name,
+      description
+    }))
   }, [cloudPlatforms])
 
-  const cloudPlatformsWithDistance = useMemo<CloudPlatformWithDistance[]>(() => {
-    return cloudPlatforms.map(platform => ({
+  const cloudPlatformsWithDistance = useMemo<
+    CloudPlatformWithDistance[]
+  >(() => {
+    return cloudPlatforms.map((platform) => ({
       ...platform,
-      distanceKm: location ? getDistanceKm(platform.geolocation, location): 0
+      distanceKm: location ? getDistanceKm(platform.geolocation, location) : 0
     }))
   }, [cloudPlatforms, location])
 
@@ -72,10 +77,12 @@ function useCloudPlatforms(
   }, [cloudPlatformsWithDistance])
 
   const visibleCloudPlatforms = useMemo(() => {
-    return cloudPlatformsWithDistance.filter(platform =>(
-		(!cloudProvider || platform.providerName === cloudProvider)
-    && (maxDistanceFromLocation === 0 || platform.distanceKm <= maxDistanceFromLocation)
-	))
+    return cloudPlatformsWithDistance.filter(
+      (platform) =>
+        (!cloudProvider || platform.providerName === cloudProvider) &&
+        (maxDistanceFromLocation === 0 ||
+          platform.distanceKm <= maxDistanceFromLocation)
+    )
   }, [cloudPlatformsWithDistance, cloudProvider, maxDistanceFromLocation])
 
   useEffect(() => {
@@ -83,13 +90,13 @@ function useCloudPlatforms(
 
     setLoading(true)
     getCloudPlatforms()
-    .then(response => {
-      if (!canceled) setCloudPlatforms(response)
-    })
-    .catch(handleError)
-    .finally(() => {
-      if (!canceled) setLoading(false)
-    })
+      .then((response) => {
+        if (!canceled) setCloudPlatforms(response)
+      })
+      .catch(handleError)
+      .finally(() => {
+        if (!canceled) setLoading(false)
+      })
 
     return () => {
       canceled = true
@@ -98,9 +105,9 @@ function useCloudPlatforms(
 
   return {
     cloudProviders,
-	  cloudPlatforms: visibleCloudPlatforms,
+    cloudPlatforms: visibleCloudPlatforms,
     maxCloudPlatformDistance,
-	  loading,
+    loading
   }
 }
 

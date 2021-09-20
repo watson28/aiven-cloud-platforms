@@ -13,7 +13,7 @@ jest.mock('../../hooks/useCloudPlatforms', (): typeof useCloudPlatforms => {
 })
 
 describe('App component', () => {
-	it('renders without errors', () => {
+  it('renders without errors', () => {
     const spy = jest.spyOn(console, 'error').mockImplementation(() => {})
     render(<App />)
 

@@ -14,7 +14,9 @@ jest.mock('../DebouncedSlider', () => (props: SliderProps) => {
       name={name}
       min={min}
       max={max}
-      onChange={(event) => onChange && onChange(event, parseInt(event.target.value))}
+      onChange={(event) =>
+        onChange && onChange(event, parseInt(event.target.value))
+      }
     />
   )
 })
@@ -22,21 +24,23 @@ jest.mock('../DebouncedSlider', () => (props: SliderProps) => {
 describe('Filters component', () => {
   const cloudProviderLabel = 'Cloud Provider'
   const cloudProviders: CloudProvider[] = [
-    { name: 'aws', description: 'Amazon Web Services'},
-    { name: 'google', description: 'Google Cloud'},
-    { name: 'do', description: 'DigitalOcean'},
+    { name: 'aws', description: 'Amazon Web Services' },
+    { name: 'google', description: 'Google Cloud' },
+    { name: 'do', description: 'DigitalOcean' }
   ]
 
-	it('emit changes when cloud provider filter changes', () => {
+  it('emit changes when cloud provider filter changes', () => {
     const onChangeCloudProvider = jest.fn()
     const option = cloudProviders[0]
-    render(<Filters
-      cloudProvider=""
-      cloudProviderOptions={cloudProviders}
-      maximumDistance={0}
-      maximumDistanceLimit={100}
-      onChangeCloudProvider={onChangeCloudProvider}
-    />)
+    render(
+      <Filters
+        cloudProvider=""
+        cloudProviderOptions={cloudProviders}
+        maximumDistance={0}
+        maximumDistanceLimit={100}
+        onChangeCloudProvider={onChangeCloudProvider}
+      />
+    )
 
     fireEvent.mouseDown(screen.getByLabelText(cloudProviderLabel))
     fireEvent.click(screen.getByText(option.description))
@@ -46,18 +50,19 @@ describe('Filters component', () => {
 
   it('emits changes when max distance changes', () => {
     const onChangeMaxDistance = jest.fn()
-    render(<Filters
-      cloudProvider=""
-      cloudProviderOptions={cloudProviders}
-      maximumDistance={0}
-      maximumDistanceLimit={100}
-      onChangeMaximumDistance={onChangeMaxDistance}
-    />)
-
-    fireEvent.change(
-      screen.getByTestId('filters--max-distance-input'),
-      { target: { value: 25 } }
+    render(
+      <Filters
+        cloudProvider=""
+        cloudProviderOptions={cloudProviders}
+        maximumDistance={0}
+        maximumDistanceLimit={100}
+        onChangeMaximumDistance={onChangeMaxDistance}
+      />
     )
+
+    fireEvent.change(screen.getByTestId('filters--max-distance-input'), {
+      target: { value: 25 }
+    })
 
     expect(onChangeMaxDistance).toHaveBeenCalledWith(25)
   })

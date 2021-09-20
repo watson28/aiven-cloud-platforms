@@ -18,12 +18,12 @@ function ErrorFallback(props: FallbackProps) {
 function App() {
   const [cloudPlatformKey, setCloudPlatformKey] = useState(0)
   const rerenderCloudPlatforms = useCallback(() => {
-    setCloudPlatformKey(value => value + 1)
+    setCloudPlatformKey((value) => value + 1)
   }, [])
 
   return (
     <div className="App">
-      <ErrorBoundary 
+      <ErrorBoundary
         resetKeys={[cloudPlatformKey]}
         onReset={rerenderCloudPlatforms}
         fallbackRender={ErrorFallback}

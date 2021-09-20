@@ -1,4 +1,4 @@
-import fetchMock from "jest-fetch-mock"
+import fetchMock from 'jest-fetch-mock'
 import { CloudPlatform, CloudProvider } from '../../types'
 import { renderHook, act } from '@testing-library/react-hooks'
 import useCloudPlatforms from '../useCloudPlatforms'
@@ -15,7 +15,7 @@ jest.mock('react-error-boundary', () => {
 
 describe('useCloudPlatforms hook', () => {
   const cloudProviders: CloudProvider[] = [
-    { name: 'aws', description: 'Amazon Web Services'},
+    { name: 'aws', description: 'Amazon Web Services' },
     { name: 'azure', description: 'Azure' }
   ]
   const cloudPlatforms: CloudPlatform[] = [
@@ -41,17 +41,17 @@ describe('useCloudPlatforms hook', () => {
         longitude: 50.55
       }
     },
-      {
-        name: '"azure-eastasia',
-        description: 'Asia, Hong Kong - Azure: East Asia',
-        providerName: 'azure',
-        providerDescription: 'Azure',
-        region: 'southeast asia',
-        geolocation: {
-          latitude: 22.5,
-          longitude: 114.0
-        }
+    {
+      name: '"azure-eastasia',
+      description: 'Asia, Hong Kong - Azure: East Asia',
+      providerName: 'azure',
+      providerDescription: 'Azure',
+      region: 'southeast asia',
+      geolocation: {
+        latitude: 22.5,
+        longitude: 114.0
       }
+    }
   ]
 
   beforeEach(() => {
@@ -66,15 +66,19 @@ describe('useCloudPlatforms hook', () => {
     await waitForNextUpdate()
 
     expect(mockResponse).toHaveBeenCalled()
-    cloudPlatforms.forEach(platform => {
-      expect(result.current.cloudPlatforms).toContainEqual(expect.objectContaining(platform))
+    cloudPlatforms.forEach((platform) => {
+      expect(result.current.cloudPlatforms).toContainEqual(
+        expect.objectContaining(platform)
+      )
     })
   })
 
   it('does not fetch cloud platforms when hook rerender', async () => {
     const mockResponse = fetchMock.mockResponse(JSON.stringify(cloudPlatforms))
 
-    const { waitForNextUpdate, rerender } = renderHook(() => useCloudPlatforms())
+    const { waitForNextUpdate, rerender } = renderHook(() =>
+      useCloudPlatforms()
+    )
     await waitForNextUpdate()
 
     mockResponse.mockClear()
@@ -84,7 +88,7 @@ describe('useCloudPlatforms hook', () => {
   })
 
   it('enable loading flag while data is fetched', async () => {
-    fetchMock.mockResponse(() => new Promise(resolve => {}))
+    fetchMock.mockResponse(() => new Promise((resolve) => {}))
     const { result } = renderHook(() => useCloudPlatforms())
 
     expect(result.current.loading).toBe(true)
@@ -92,9 +96,12 @@ describe('useCloudPlatforms hook', () => {
 
   it('disables loading flag after data is fetched', async () => {
     let resolveServerResponse: (response: string) => void = () => {}
-    fetchMock.mockResponse(() => new Promise(resolve => {
-      resolveServerResponse = resolve
-    }))
+    fetchMock.mockResponse(
+      () =>
+        new Promise((resolve) => {
+          resolveServerResponse = resolve
+        })
+    )
     const { waitForNextUpdate, result } = renderHook(() => useCloudPlatforms())
 
     act(() => {
@@ -108,11 +115,13 @@ describe('useCloudPlatforms hook', () => {
   it('filters platforms by cloud provider', async () => {
     const providerNameFilter = 'azure'
     fetchMock.mockResponse(JSON.stringify(cloudPlatforms))
-    const { result, waitForNextUpdate } = renderHook(() => useCloudPlatforms(providerNameFilter))
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useCloudPlatforms(providerNameFilter)
+    )
 
     await waitForNextUpdate()
 
-    result.current.cloudPlatforms.forEach(platform => {
+    result.current.cloudPlatforms.forEach((platform) => {
       expect(platform.providerName).toBe(providerNameFilter)
     })
   })
@@ -126,16 +135,16 @@ describe('useCloudPlatforms hook', () => {
       longitude: testPlatform.geolocation.longitude + 0.01
     }
     fetchMock.mockResponse(JSON.stringify(cloudPlatforms))
-    const { result, waitForNextUpdate } = renderHook(() => useCloudPlatforms(
-      providerNameFilter,
-      maxDistanceFromLocationKm,
-      location
-    ))
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useCloudPlatforms(providerNameFilter, maxDistanceFromLocationKm, location)
+    )
 
     await waitForNextUpdate()
 
     expect(result.current.cloudPlatforms.length).toBe(1)
-    expect(result.current.cloudPlatforms[0]).toEqual(expect.objectContaining(testPlatform))
+    expect(result.current.cloudPlatforms[0]).toEqual(
+      expect.objectContaining(testPlatform)
+    )
   })
 
   it('emits error to errorBoundary when data fetch fails', async () => {

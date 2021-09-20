@@ -5,15 +5,14 @@ import faker from 'faker'
 import { CloudPlatform } from '../../types'
 
 describe('CloudPlatformList component', () => {
-	it('renders cloud platforms', () => {
-		const platforms = [
-			createTestPlatform(),
-			createTestPlatform()
-		]
+  it('renders cloud platforms', () => {
+    const platforms = [createTestPlatform(), createTestPlatform()]
     render(<CloudPlatformList cloudPlatforms={platforms} />)
 
-    const cloudPlatformElements = screen.getAllByTestId('cloud-platform-list--item')
-    
+    const cloudPlatformElements = screen.getAllByTestId(
+      'cloud-platform-list--item'
+    )
+
     expect(cloudPlatformElements.length).toBe(platforms.length)
     platforms.forEach((platform, index) => {
       expect(
@@ -28,14 +27,16 @@ describe('CloudPlatformList component', () => {
         within(cloudPlatformElements[index]).getByText(platform.region)
       ).toBeInTheDocument()
     })
-	})
+  })
 
-	it('renders cloud platforms getlocations with fixed decimals', () => {
+  it('renders cloud platforms getlocations with fixed decimals', () => {
     const geolocationWithLongDecimals = {
       latitude: 45.456789,
       longitude: 24.12345
     }
-    const platforms = [createTestPlatform({ geolocation: geolocationWithLongDecimals })]
+    const platforms = [
+      createTestPlatform({ geolocation: geolocationWithLongDecimals })
+    ]
 
     render(<CloudPlatformList cloudPlatforms={platforms} />)
 
@@ -46,7 +47,7 @@ describe('CloudPlatformList component', () => {
     ).toBeInTheDocument()
   })
 
-	it('renders placeholder while fetching cloud platforms', () => {
+  it('renders placeholder while fetching cloud platforms', () => {
     render(<CloudPlatformList cloudPlatforms={[]} loading={true} />)
 
     expect(
@@ -56,9 +57,10 @@ describe('CloudPlatformList component', () => {
 })
 
 function createTestPlatform(data: Partial<CloudPlatform> = {}): CloudPlatform {
-	return {
+  return {
     name: faker.commerce.productName(),
     description: faker.datatype.string(20),
+    providerName: faker.datatype.string(5),
     providerDescription: faker.datatype.string(20),
     region: faker.datatype.string(10),
     geolocation: {
@@ -66,5 +68,5 @@ function createTestPlatform(data: Partial<CloudPlatform> = {}): CloudPlatform {
       longitude: parseFloat(faker.address.longitude())
     },
     ...data
-	}
+  }
 }

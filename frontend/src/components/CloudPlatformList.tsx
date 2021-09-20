@@ -1,4 +1,4 @@
-import React  from 'react'
+import React from 'react'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
@@ -10,21 +10,25 @@ import { CloudPlatform } from '../types'
 import Skeleton from '@material-ui/lab/Skeleton'
 
 interface CloudPlatformListProps {
-	cloudPlatforms: CloudPlatform[],
-	loading?: boolean
+  cloudPlatforms: CloudPlatform[]
+  loading?: boolean
 }
 
-function CloudPlatformList({ cloudPlatforms, loading }: CloudPlatformListProps) {
-
+function CloudPlatformList({
+  cloudPlatforms,
+  loading
+}: CloudPlatformListProps) {
   if (loading) {
     return (
       <div data-testid="cloud-platform-list--placeholder">
-        {Array.apply(null, Array(10)).map((_, index) => <Skeleton key={index}/>)}
+        {Array.apply(null, Array(10)).map((_, index) => (
+          <Skeleton key={index} />
+        ))}
       </div>
     )
   }
-  
-	return (
+
+  return (
     <TableContainer component={Paper}>
       <Table aria-label="simple table">
         <TableHead>
@@ -38,22 +42,28 @@ function CloudPlatformList({ cloudPlatforms, loading }: CloudPlatformListProps) 
         </TableHead>
         <TableBody>
           {cloudPlatforms.map((platform) => (
-            <TableRow key={platform.name} data-testid="cloud-platform-list--item">
+            <TableRow
+              key={platform.name}
+              data-testid="cloud-platform-list--item"
+            >
               <TableCell component="th" scope="row">
                 {platform.name}
               </TableCell>
               <TableCell align="right">{platform.description}</TableCell>
-              <TableCell align="right">{platform.providerDescription}</TableCell>
+              <TableCell align="right">
+                {platform.providerDescription}
+              </TableCell>
               <TableCell align="right">{platform.region}</TableCell>
               <TableCell align="right">
-                ({platform.geolocation.latitude.toFixed(2)}, {platform.geolocation.longitude.toFixed(2)})
+                ({platform.geolocation.latitude.toFixed(2)},{' '}
+                {platform.geolocation.longitude.toFixed(2)})
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </TableContainer>
-	)
+  )
 }
 
 export default CloudPlatformList

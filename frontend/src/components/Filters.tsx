@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     formControl: {
       margin: theme.spacing(1),
-      minWidth: 350,
+      minWidth: 350
     }
   })
 )
@@ -37,19 +37,27 @@ function Filters({
   maximumDistanceDisabled
 }: FiltersProps) {
   const classes = useStyles()
-  const handleMaximumDistanceChange = useCallback((event: React.ChangeEvent<{}>, value: number | number[]) => {
-    onChangeMaximumDistance && onChangeMaximumDistance(value instanceof Array ? value[0] : value)
-  }, [onChangeMaximumDistance])
-  
-  const handleCloudProviderChange = useCallback((event: React.ChangeEvent<{value: unknown}>) => {
-    onChangeCloudProvider && onChangeCloudProvider(event.target.value as string)
-  }, [onChangeCloudProvider])
+  const handleMaximumDistanceChange = useCallback(
+    (event: React.ChangeEvent<{}>, value: number | number[]) => {
+      onChangeMaximumDistance &&
+        onChangeMaximumDistance(value instanceof Array ? value[0] : value)
+    },
+    [onChangeMaximumDistance]
+  )
 
-	return (
+  const handleCloudProviderChange = useCallback(
+    (event: React.ChangeEvent<{ value: unknown }>) => {
+      onChangeCloudProvider &&
+        onChangeCloudProvider(event.target.value as string)
+    },
+    [onChangeCloudProvider]
+  )
+
+  return (
     <form
       noValidate
       autoComplete="off"
-      onSubmit={event => event.preventDefault()}
+      onSubmit={(event) => event.preventDefault()}
     >
       <FormControl className={classes.formControl}>
         <InputLabel id="cloud-provider-select-label">Cloud Provider</InputLabel>
@@ -58,19 +66,16 @@ function Filters({
           label="Cloud Provider"
           value={cloudProvider}
           onChange={handleCloudProviderChange}
-          inputProps={{ 'data-testid': 'filters--cloud-provider-filter-input'}}
+          inputProps={{ 'data-testid': 'filters--cloud-provider-filter-input' }}
         >
-          <MenuItem key="clear-option" value=""><em>None</em></MenuItem>
-          {cloudProviderOptions.map(
-            provider => (
-              <MenuItem
-                key={provider.name}
-                value={provider.name}
-              >
-                {provider.description}
-              </MenuItem>
-            )
-          )}
+          <MenuItem key="clear-option" value="">
+            <em>None</em>
+          </MenuItem>
+          {cloudProviderOptions.map((provider) => (
+            <MenuItem key={provider.name} value={provider.name}>
+              {provider.description}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
       <FormControl className={classes.formControl}>
@@ -91,7 +96,7 @@ function Filters({
         />
       </FormControl>
     </form>
-	)
+  )
 }
 
 export default Filters

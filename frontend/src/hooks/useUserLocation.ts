@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react'
 import { Geolocation } from '../types'
 
 function useUserLocation() {
@@ -6,7 +6,7 @@ function useUserLocation() {
 
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(position => {
+      navigator.geolocation.getCurrentPosition((position) => {
         setPosition({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude

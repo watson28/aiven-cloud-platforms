@@ -8,11 +8,8 @@ function CloudPlatforms() {
   const [cloudProviderFilter, setCloudProviderFilter] = useState<string>('')
   const [maxDistanceFilter, setMaxDistanceFilter] = useState<number>(0)
   const userLocation = useUserLocation()
-  const { cloudProviders, cloudPlatforms, maxCloudPlatformDistance, loading } = useCloudPlatforms(
-    cloudProviderFilter,
-    maxDistanceFilter,
-    userLocation
-  )
+  const { cloudProviders, cloudPlatforms, maxCloudPlatformDistance, loading } =
+    useCloudPlatforms(cloudProviderFilter, maxDistanceFilter, userLocation)
 
   return (
     <>
