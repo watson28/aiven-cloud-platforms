@@ -1,14 +1,12 @@
-from dataclasses import dataclass
 from typing import Optional
+from fastapi_utils.api_model import APIModel
 
-@dataclass
-class Geolocation:
+class Geolocation(APIModel):
 	latitude: float
 	longitude: float
 
 
-@dataclass
-class CloudPlatform:
+class CloudPlatform(APIModel):
 	name: str
 	description: str
 	provider_name: Optional[str]

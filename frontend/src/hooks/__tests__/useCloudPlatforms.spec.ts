@@ -1,5 +1,5 @@
 import fetchMock from "jest-fetch-mock"
-import { CloudPlatform } from '../../types'
+import { CloudPlatform, CloudProvider } from '../../types'
 import { renderHook, act } from '@testing-library/react-hooks'
 import useCloudPlatforms from '../useCloudPlatforms'
 
@@ -14,6 +14,10 @@ jest.mock('react-error-boundary', () => {
 })
 
 describe('useCloudPlatforms hook', () => {
+  const cloudProviders: CloudProvider[] = [
+    { name: 'aws', description: 'Amazon Web Services'},
+    { name: 'azure', description: 'Azure' }
+  ]
   const cloudPlatforms: CloudPlatform[] = [
     {
       name: 'aws-af-south-1',
@@ -142,5 +146,14 @@ describe('useCloudPlatforms hook', () => {
     await waitForNextUpdate()
 
     expect(mockErrorBoundaryHandleError).toHaveBeenCalledWith(error)
+  })
+
+  it('generates cloud providers from cloud platforms', async () => {
+    fetchMock.mockResponse(JSON.stringify(cloudPlatforms))
+    const { result, waitForNextUpdate } = renderHook(() => useCloudPlatforms())
+
+    await waitForNextUpdate()
+
+    expect(result.current.cloudProviders).toEqual(cloudProviders)
   })
 })

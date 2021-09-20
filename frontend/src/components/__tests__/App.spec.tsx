@@ -5,6 +5,7 @@ import useCloudPlatforms from '../../hooks/useCloudPlatforms'
 
 jest.mock('../../hooks/useCloudPlatforms', (): typeof useCloudPlatforms => {
   return () => ({
+    cloudProviders: [],
     cloudPlatforms: [],
     loading: false,
     maxCloudPlatformDistance: 0
@@ -13,6 +14,11 @@ jest.mock('../../hooks/useCloudPlatforms', (): typeof useCloudPlatforms => {
 
 describe('App component', () => {
 	it('renders without errors', () => {
+    const spy = jest.spyOn(console, 'error').mockImplementation(() => {})
     render(<App />)
+
+    expect(spy).not.toHaveBeenCalled()
+
+    spy.mockRestore()
   })
 })

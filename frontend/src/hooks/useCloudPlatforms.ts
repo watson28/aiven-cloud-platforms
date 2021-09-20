@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { CloudPlatform, Geolocation } from '../types'
+import { CloudPlatform, CloudProvider, Geolocation } from '../types'
 import { useErrorHandler } from 'react-error-boundary'
 
 const getCloudPlatforms = (): Promise<CloudPlatform[]> => {
@@ -8,7 +8,7 @@ const getCloudPlatforms = (): Promise<CloudPlatform[]> => {
     throw new Error('Service url not defined in application.')
   }
 
-  return fetch(serviceUrl).then(response => {
+  return fetch(`${serviceUrl}/cloud-platforms`).then(response => {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
@@ -47,6 +47,16 @@ function useCloudPlatforms(
   const handleError = useErrorHandler()
   const [loading, setLoading] = useState<boolean>(true)
   const [cloudPlatforms, setCloudPlatforms] = useState<CloudPlatform[]>([])
+
+  const cloudProviders = useMemo<CloudProvider[]>(() => {
+    const providerRecords = cloudPlatforms.reduce((acc, platform) => {
+      acc[platform.providerName] = platform.providerDescription
+      return acc
+    }, {} as Record<string, string>)
+
+    return Object.entries(providerRecords)
+      .map(([name, description]) => ({ name, description }))
+  }, [cloudPlatforms])
 
   const cloudPlatformsWithDistance = useMemo<CloudPlatformWithDistance[]>(() => {
     return cloudPlatforms.map(platform => ({
@@ -87,6 +97,7 @@ function useCloudPlatforms(
   }, [handleError])
 
   return {
+    cloudProviders,
 	  cloudPlatforms: visibleCloudPlatforms,
     maxCloudPlatformDistance,
 	  loading,
