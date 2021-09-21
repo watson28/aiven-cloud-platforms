@@ -52,13 +52,13 @@ class CloudPlatformsService:
             )
 
         except requests.exceptions.RequestException:
-            logging.exception('Failed to connect to Aiven service')
+            logging.error('Failed to connect to Aiven service')
             raise CloudPlatformsUnavailableException()
         except JSONDecodeError:
-            logging.exception('Invalid JSON content received from downstream service')
+            logging.error('Invalid JSON content received from downstream service')
             raise CloudPlatformsUnavailableException()
         except ValidationError:
-            logging.exception('Invalid clouds format received from downstream service')
+            logging.error('Invalid clouds format received from downstream service')
             raise CloudPlatformsUnavailableException()
 
     def _map_valid_cloud_platform_or_none(self, cloud_platform: dict) -> Optional[CloudPlatformDownstream]:
@@ -66,7 +66,7 @@ class CloudPlatformsService:
             self._validate_cloud_platform(cloud_platform)
             return cast(CloudPlatformDownstream, cloud_platform)
         except ValidationError:
-            logging.exception('Invalid cloud platform format received.')
+            logging.error('Invalid cloud platform format received.')
             return None
 
     def _validate_cloud_platform(self, cloud_platform_dict: dict):

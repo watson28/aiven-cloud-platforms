@@ -22,7 +22,7 @@ class CloudPlatformsRepository:
             with open(self._CACHE_FILE_PATH) as cache_file:
                 self.platforms = [CloudPlatform(**p) for p in json.load(cache_file)]
         except JSONDecodeError:
-            logging.exception('Failed to load cloud platform cache')
+            logging.error('Failed to load cloud platform cache')
         except FileNotFoundError:
             logging.info('Cache file not found')
 
