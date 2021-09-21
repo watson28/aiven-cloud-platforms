@@ -12,7 +12,7 @@ class CloudPlatformNotFoundException(BaseException):
 
 
 class CloudPlatformsRepository:
-    _CACHE_FILE_PATH = os.path.join(os.getcwd(), '.cache/cloud_platforms')
+    _CACHE_FILE_PATH = '/data/cloud_platforms'
     platforms: Optional[Sequence[CloudPlatform]]
 
     def __init__(self) -> None:
