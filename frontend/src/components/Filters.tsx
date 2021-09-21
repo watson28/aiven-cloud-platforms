@@ -80,7 +80,7 @@ function Filters({
       </FormControl>
       <FormControl className={classes.formControl}>
         <Typography id="cloud-platform-max-distance" gutterBottom>
-          Max distance from current location
+          Max distance from current location: {maximumDistance} km
         </Typography>
         <DebouncedSlider
           delay={500}
