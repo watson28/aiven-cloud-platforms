@@ -31,10 +31,7 @@ class CloudPlatformsUnavailableException(BaseException):
 class CloudPlatformsService:
     def get_cloud_platforms(self) -> Sequence[CloudPlatformDownstream]:
         try:
-            response = requests.get(
-                f'{settings.aiven_service_url}/clouds',
-                headers={'Authorization': f'aivenv1 {settings.aiven_auth_token}'}
-            )
+            response = requests.get(f'{settings.aiven_service_url}/clouds')
 
             if response.status_code != 200:
                 logging.error(f'Invalid status code received: {response.status_code}')

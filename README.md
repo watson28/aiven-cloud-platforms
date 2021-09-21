@@ -15,14 +15,11 @@ The application consist of both a frontend and a backend api service which can b
 using docker.
 
 ```bash
-mkdir -p foo .data
-echo "AIVEN_AUTH_TOKEN=<insert-your-api-toke-here>" >> .env
+mkdir -p .data
 docker compose -p aiven up
 ```
 
 The first line create a `.data` folder used to cache the cloud platforms.
-The second line generates a `.env` file for providing the auth token for Aiven API.
-
 
 ## Main technologies
 - React

@@ -23,5 +23,4 @@ services:
       - "8000:8000"
     environment:
       - AIVEN_SERVICE_URL=https://api.aiven.io/v1
-      - AIVEN_AUTH_TOKEN=${AIVEN_AUTH_TOKEN}
       - CLOUD_PLATFORMS_HYDRATE_PERIOD_SEC=1800
