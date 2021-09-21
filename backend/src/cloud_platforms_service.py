@@ -30,16 +30,16 @@ class CloudPlatformsUnavailableException(BaseException):
 
 class CloudPlatformsService:
     def get_cloud_platforms(self) -> Sequence[CloudPlatformDownstream]:
-        response = requests.get(
-            f'{settings.aiven_service_url}/clouds',
-            headers={'Authorization': f'aivenv1 {settings.aiven_auth_token}'}
-        )
-
-        if response.status_code != 200:
-            logging.error(f'Invalid status code received: {response.status_code}')
-            raise CloudPlatformsUnavailableException()
-
         try:
+            response = requests.get(
+                f'{settings.aiven_service_url}/clouds',
+                headers={'Authorization': f'aivenv1 {settings.aiven_auth_token}'}
+            )
+
+            if response.status_code != 200:
+                logging.error(f'Invalid status code received: {response.status_code}')
+                raise CloudPlatformsUnavailableException()
+
             response_content = response.json()
             self._validate_cloud_platform_response(response_content)
             validated_cloud_platforms = map(
@@ -51,6 +51,9 @@ class CloudPlatformsService:
                 list(filter(lambda platform: platform is not None, validated_cloud_platforms))
             )
 
+        except requests.exceptions.RequestException:
+            logging.exception('Failed to connect to Aiven service')
+            raise CloudPlatformsUnavailableException()
         except JSONDecodeError:
             logging.exception('Invalid JSON content received from downstream service')
             raise CloudPlatformsUnavailableException()

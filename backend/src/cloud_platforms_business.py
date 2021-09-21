@@ -1,4 +1,8 @@
 from typing import Optional, Pattern, Sequence
+from tenacity import retry
+from tenacity.retry import retry_if_exception_type
+from tenacity.stop import stop_after_attempt
+from tenacity.wait import wait_fixed
 from .cloud_platforms_repository import CloudPlatformsRepository
 from .cloud_platforms_service import CloudPlatformsService, CloudPlatformDownstream, CloudPlatformsUnavailableException
 from src.cloud_platforms_model import CloudPlatform, Geolocation
@@ -21,16 +25,17 @@ class CloudPlatformBusiness:
     def get_cloud_platforms(self) -> Sequence[CloudPlatform]:
         return self.repository.get_cloud_platforms()
 
+    @retry(
+        stop=stop_after_attempt(5),
+        wait=wait_fixed(10),
+        retry=retry_if_exception_type(CloudPlatformsUnavailableException))
     def hydrate_cloud_platforms(self):
-        try:
-            logging.info('Hydrating cloud platforms')
-            platforms = self.service.get_cloud_platforms()
-            transformed_platforms = list(
-                map(self._transform_cloud_platform, platforms),
-            )
-            self.repository.save_cloud_platforms(transformed_platforms)
-        except CloudPlatformsUnavailableException:
-            pass
+        logging.info('Hydrating cloud platforms')
+        platforms = self.service.get_cloud_platforms()
+        transformed_platforms = list(
+            map(self._transform_cloud_platform, platforms),
+        )
+        self.repository.save_cloud_platforms(transformed_platforms)
 
     def _transform_cloud_platform(self, platform: CloudPlatformDownstream) -> CloudPlatform:
         return CloudPlatform(
